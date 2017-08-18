@@ -63,6 +63,11 @@ var inputs = [
 	return plugins;
 }, {});
 
+// Patch quit() to set default message if there isn't one provided
+ircFramework.Client.prototype.quit = function(message) {
+	this.connection.end(this.rawString('QUIT', message || `The Lounge - ${pkg.homepage}`));
+};
+
 function Client(manager, name, config) {
 	if (typeof config !== "object") {
 		config = {};
@@ -486,7 +491,7 @@ Client.prototype.quit = function() {
 	}
 	this.networks.forEach((network) => {
 		if (network.irc) {
-			network.irc.quit("Page closed");
+			network.irc.quit(`Page closed - ${pkg.homepage}`);
 		}
 
 		network.destroy();
